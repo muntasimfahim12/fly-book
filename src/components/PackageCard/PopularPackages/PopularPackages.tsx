@@ -3,7 +3,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import data from "../../../data/all.json";
+import data from "../../../data/packge.json";
 import { IconCalendar, IconUser, IconMapPin } from "@tabler/icons-react";
 
 const PopularPackages = () => {

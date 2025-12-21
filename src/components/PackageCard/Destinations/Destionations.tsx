@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import destinations from "../../../data/all.json";
+import destinations from "../../../data/cart.json";
 
 const PopularDestinations: React.FC = () => {
   return (
