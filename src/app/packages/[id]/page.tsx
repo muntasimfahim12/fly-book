@@ -3,13 +3,8 @@
 import React, { useState, useMemo } from "react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import allData from "../../../data/all.json"; 
-import {
-  IconCalendar,
-  IconUser,
-  IconMapPin,
-  IconFilter
-} from "@tabler/icons-react";
+import allData from "../../../data/all.json";
+import { IconCalendar, IconUser, IconMapPin, IconFilter } from "@tabler/icons-react";
 import HolidayFormModal from "../HolidayFormModal";
 
 const PackageDetails = () => {
@@ -28,7 +23,6 @@ const PackageDetails = () => {
 
   const resetFilters = () => setSelectedDurations([]);
 
-  // ✅ single allData থেকে search
   const packageItem = allData.find((item) => item.id.toString() === id);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -43,7 +37,9 @@ const PackageDetails = () => {
     return (
       <div className="h-screen flex flex-col items-center justify-center">
         <p className="text-xl font-semibold text-gray-500">Package not found!</p>
-        <button onClick={() => router.back()} className="mt-4 text-green-600 underline">Go Back</button>
+        <button onClick={() => router.back()} className="mt-4 text-green-600 underline">
+          Go Back
+        </button>
       </div>
     );
   }
@@ -188,7 +184,19 @@ const PackageDetails = () => {
               START PLANNING
             </button>
 
-            <HolidayFormModal open={open} setOpen={setOpen} />
+            {/* ✅ Fixed HolidayFormModal Call */}
+            <HolidayFormModal
+              open={open}
+              setOpen={setOpen}
+              packageData={{
+                price: packageItem.price?.toString() ?? "0",
+                spots: (Array.isArray(packageItem.spots) ? packageItem.spots : ["No spots available"]) as string[],
+                duration: packageItem.days ?? "Not specified",
+                people: Number(packageItem.people) || 1,
+                pickup: packageItem.pickup ?? "Not specified",
+              }}
+            />
+
           </div>
         </div>
 

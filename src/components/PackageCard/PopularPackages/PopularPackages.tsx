@@ -70,7 +70,7 @@ const PopularPackages = () => {
 
             <div className="text-center mt-6">
                 <Link
-                    href="/packages"
+                    href="/seeAllPack"
                     className="group inline-flex items-center gap-1.5 text-green-600 font-medium text-sm transition-all duration-200 hover:text-green-800 hover:font-semibold"
                 >
                     <span className="transition-transform duration-200 group-hover:translate-x-[1px]">
