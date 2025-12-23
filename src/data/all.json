@@ -68,7 +68,7 @@
     "people": "1 - 2 People",
     "price": 10500,
     "image": "/cart/thailand.jpg",
-    "images": ["/cart/thailand1.jpg","/cart/thailand2.jpg","/cart/thailand3.jpg","/cart/thailand4.jpg"],
+    "images": ["/cart/thailand.jpg","/cart/thailand.jpg","/cart/thailand.jpg","/cart/thailand.jpg"],
     "details": "Discover Bangkok’s rich culture, markets, temples, and nightlife in this short romantic getaway package.",
     "highlights": ["Bangkok city tour","Temple & cultural visits","Chao Phraya river cruise","Comfortable hotel stay","Traditional Thai meals"],
     "spots": ["Grand Palace", "Wat Arun", "Chao Phraya River"],

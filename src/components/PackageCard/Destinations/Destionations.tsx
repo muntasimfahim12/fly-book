@@ -1,11 +1,45 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import destinations from "../../../data/cart.json";
+
+interface DestinationType {
+  id: number | string;
+  country: string;
+  region: string;
+  image: string;
+  details: string;
+}
 
 const PopularDestinations: React.FC = () => {
+  const [destinations, setDestinations] = useState<DestinationType[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDestinations = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/destinations`);
+        if (!res.ok) throw new Error("Failed to fetch destinations");
+        const data: DestinationType[] = await res.json();
+        setDestinations(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDestinations();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="text-center py-16 text-gray-500 font-semibold">
+        Loading destinations...
+      </div>
+    );
+  }
+
   return (
     <section className="w-full bg-gray-50 py-16 px-6 mt-6">
       <div className="max-w-7xl mx-auto">
@@ -28,7 +62,7 @@ const PopularDestinations: React.FC = () => {
                     src={dest.image}
                     alt={dest.country}
                     fill
-                    className="object-cover "
+                    className="object-cover"
                   />
                 </div>
 

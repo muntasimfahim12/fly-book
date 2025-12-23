@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import data from "../../data/all.json";
 import {
     IconCalendar,
     IconUser,
@@ -11,22 +10,59 @@ import {
     IconSearch,
 } from "@tabler/icons-react";
 
+interface PackageType {
+    id: number | string;
+    title: string;
+    country: string;
+    image: string;
+    days: string;
+    people: string;
+    price: number;
+    details?: string;
+}
+
 const AllPackagesPage = () => {
     const [search, setSearch] = useState("");
-    const prices = data.map((item) => item.price);
-    const minPrice = Math.min(...prices);
-    const maxPrice = Math.max(...prices);
+    const [allData, setAllData] = useState<PackageType[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [priceRange, setPriceRange] = useState(0);
 
-    const [priceRange, setPriceRange] = useState(maxPrice);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/allpackge`);
+                if (!res.ok) throw new Error("Failed to fetch packages");
+                const data: PackageType[] = await res.json();
+                setAllData(data);
+
+                // Set initial max price
+                const maxPrice = Math.max(...data.map(p => p.price));
+                setPriceRange(maxPrice);
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
 
     const filteredData = useMemo(() => {
-        return data.filter(
+        return allData.filter(
             (item) =>
                 (item.title.toLowerCase().includes(search.toLowerCase()) ||
                     item.country.toLowerCase().includes(search.toLowerCase())) &&
                 item.price <= priceRange
         );
-    }, [search, priceRange]);
+    }, [search, priceRange, allData]);
+
+    if (loading) {
+        return <div className="text-center py-20 text-gray-500 font-semibold">Loading packages...</div>;
+    }
+
+    const prices = allData.map((item) => item.price);
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">

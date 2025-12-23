@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "../context/AuthContext";
 import Navbar from "../components/shared/Navbar";
 import Footer from "../components/shared/Fotter";
-import { AuthProvider } from "../context/AuthContext"; // ✅ AuthContext import
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,25 +20,13 @@ export const metadata: Metadata = {
   description: "Professional Flight Booking Website",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {/* AuthProvider wrap */}
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <AuthProvider>
           <Navbar />
-
-          {/* Page content (navbar fixed, so padding needed) */}
-          <main className="pt-20">
-            {children}
-          </main>
-
+          <main className="pt-20">{children}</main>
           <Footer />
         </AuthProvider>
       </body>

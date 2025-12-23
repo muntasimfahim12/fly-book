@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Thumbs, Autoplay } from "swiper/modules";
 import 'swiper/css';
@@ -10,21 +10,49 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/thumbs';
 
-import allData from "../../../data/all.json"; 
+interface PackageType {
+  id: number | string;
+  title: string;
+  country: string;
+  images: string[];
+  days: string;
+  people: string;
+  price: number;
+  details?: string;
+  highlights?: string[];
+}
 
 const DetailPage = () => {
   const { id } = useParams();
   const router = useRouter();
 
-  // id অনুযায়ী প্যাকেজ খোঁজা
-  const pkg = allData.find(item => item.id.toString() === id);
-
-  // Thumbnails state
+  const [pkg, setPkg] = useState<PackageType | null>(null);
+  const [loading, setLoading] = useState(true);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [thumbsSwiper, setThumbsSwiper] = useState<any>(null);
 
+  useEffect(() => {
+    const fetchPackage = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/allpackge/${id}`);
+        if (!res.ok) throw new Error("Failed to fetch package");
+        const data = await res.json();
+        setPkg(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPackage();
+  }, [id]);
+
+  if (loading) {
+    return <div className="text-center mt-20 text-gray-500 font-semibold">Loading package details...</div>;
+  }
+
   if (!pkg) {
-    return <div className="text-center mt-20 text-xl">Package not found</div>;
+    return <div className="text-center mt-20 text-xl text-red-500">Package not found</div>;
   }
 
   return (
