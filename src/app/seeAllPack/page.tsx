@@ -178,11 +178,12 @@ const AllPackagesPage = () => {
                                 </div>
 
                                 <Link
-                                    href={`/all/${item.id}`}
+                                    href={`/allpackge/${item.id}`}  
                                     className="mt-3 md:mt-6 bg-green-600 text-white text-xs font-semibold px-5 py-2.5 rounded-xl hover:bg-green-700 transition"
                                 >
                                     View Details
                                 </Link>
+
                             </div>
                         </div>
                     ))}

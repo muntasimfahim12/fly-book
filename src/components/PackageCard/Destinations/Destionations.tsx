@@ -51,7 +51,7 @@ const PopularDestinations: React.FC = () => {
           {destinations.map((dest) => (
             <Link
               key={dest.id}
-              href={`/packages/${dest.id}`}
+              href={`/all/${dest.id}`} 
               className="group"
             >
               <div className="bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
@@ -63,6 +63,7 @@ const PopularDestinations: React.FC = () => {
                     alt={dest.country}
                     fill
                     className="object-cover"
+                    unoptimized // ✅ Prevents 404 if deployed image path issue
                   />
                 </div>
 

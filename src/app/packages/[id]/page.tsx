@@ -34,27 +34,21 @@ const PackageDetails = () => {
 
   // 🔹 Fetch data from server
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchPackage = async () => {
       try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/allpackge`
-        );
-
-        if (!res.ok) {
-          throw new Error("Failed to fetch data");
-        }
-
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/allpackge/${id}`);
+        if (!res.ok) throw new Error("Package not found");
         const data = await res.json();
-        setAllData(data);
-      } catch (error) {
-        console.error("Failed to fetch packages:", error);
+        setAllData([data]);
+      } catch (err) {
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
+    fetchPackage();
+  }, [id]);
 
-    fetchData();
-  }, []);
 
 
   const toggleFilter = (duration: string) => {
