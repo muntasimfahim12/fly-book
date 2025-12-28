@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 interface DestinationType {
-  id: number | string;
+  _id: string;
   country: string;
   region: string;
   image: string;
@@ -19,16 +19,19 @@ const PopularDestinations: React.FC = () => {
   useEffect(() => {
     const fetchDestinations = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/destinations`);
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/destinations`
+        );
         if (!res.ok) throw new Error("Failed to fetch destinations");
         const data: DestinationType[] = await res.json();
         setDestinations(data);
       } catch (err) {
-        console.error(err);
+        console.error("Destination fetch error:", err);
       } finally {
         setLoading(false);
       }
     };
+
     fetchDestinations();
   }, []);
 
@@ -50,20 +53,20 @@ const PopularDestinations: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {destinations.map((dest) => (
             <Link
-              key={dest.id}
-              href={`/all/${dest.id}`} 
+              key={dest._id}
+              href={`/destinations/${dest._id}`}   
               className="group"
             >
               <div className="bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-
+                
                 {/* Image */}
-                <div className="relative w-full h-60 overflow-hidden">
+                <div className="relative w-full h-60">
                   <Image
                     src={dest.image}
                     alt={dest.country}
                     fill
                     className="object-cover"
-                    unoptimized // ✅ Prevents 404 if deployed image path issue
+                    unoptimized
                   />
                 </div>
 
