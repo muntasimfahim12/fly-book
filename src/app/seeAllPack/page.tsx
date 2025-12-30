@@ -9,9 +9,10 @@ import {
   IconMapPin,
   IconSearch,
 } from "@tabler/icons-react";
+import CustomHolidayHeroPage from "../planing/page";
 
 interface PackageType {
-  _id: string;           
+  _id: string;
   title: string;
   country: string;
   image: string;
@@ -31,7 +32,7 @@ const AllPackagesPage = () => {
     const fetchData = async () => {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/allpackge`
+          `${process.env.NEXT_PUBLIC_API_URL}/packge`
         );
         if (!res.ok) throw new Error("Failed to fetch packages");
 
@@ -187,7 +188,7 @@ const AllPackagesPage = () => {
                 </div>
 
                 <Link
-                  href={`/all/${item._id}`} 
+                  href={`/all/${item._id}`}
                   className="mt-3 md:mt-6 bg-green-600 text-white text-xs font-semibold px-5 py-2.5 rounded-xl hover:bg-green-700 transition"
                 >
                   View Details
@@ -197,8 +198,11 @@ const AllPackagesPage = () => {
           ))}
         </section>
       </div>
+      <div>
+        <CustomHolidayHeroPage></CustomHolidayHeroPage>
+      </div>
     </div>
   );
 };
-
+    
 export default AllPackagesPage;

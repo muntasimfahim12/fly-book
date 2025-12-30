@@ -1,10 +1,10 @@
-import FAQSection from "../components/PackageCard/Faq/Faq";
+import FAQSection from "../components/Faq/Faq";
 import Page from "../components/shared/hero/hero";
-import Iata from "../components/PackageCard/Iata/Iata";
-import TravelStats from "../components/PackageCard/TravelStats/TravelStats";
-import TravelCard from "../components/PackageCard/TravelPackages/TravelCard";
-import PopularDestinations from "../components/PackageCard/Destinations/Destionations";
-import PopularPackages from "../components/PackageCard/PopularPackages/PopularPackages";
+import Iata from "../components/Iata/Iata";
+import TravelStats from "../components/TravelStats/TravelStats";
+import TravelCard from "../components/TravelPackages/TravelCard";
+// import PopularDestinations from "../components/Destinations/Destionations";
+import PopularPackages from "../components/PopularPackages/PopularPackages";
 
 
 export default function Home() {
@@ -12,7 +12,7 @@ export default function Home() {
     <div>
       <Page></Page>
       <PopularPackages></PopularPackages>
-      <PopularDestinations></PopularDestinations>
+      {/* <PopularDestinations></PopularDestinations> */}
       <TravelCard></TravelCard>
       <TravelStats></TravelStats>
       <FAQSection></FAQSection>
