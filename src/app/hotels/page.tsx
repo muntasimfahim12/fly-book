@@ -2,17 +2,18 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { 
-  IconStarFilled, 
-  IconMapPin, 
-  IconWifi, 
-  IconPool, 
-  IconParking, 
+import {
+  IconStarFilled,
+  IconMapPin,
+  IconWifi,
+  IconPool,
+  IconParking,
   IconFilter,
   IconSearch,
   IconChevronRight,
   IconAirConditioning
 } from "@tabler/icons-react";
+import { HeroSection } from "@/src/components/shared/hero/HeroSection";
 
 // HotelType interface
 interface HotelType {
@@ -52,9 +53,26 @@ const HotelsPage = () => {
   if (loading) return <p className="text-center mt-20 font-bold">Loading hotels...</p>;
 
   return (
-    <div className="min-h-screen bg-[#F7F9FB] pt-28 pb-16 px-6">
-      <div className="max-w-7xl mx-auto">
-        
+    <div className="min-h-screen bg-[#F7F9FB]">
+
+      {/* Hero Section */}
+      <div className="relative w-full">
+        <HeroSection
+          title="Experience Premium Stays"
+          subtitle="Curated luxury hotels for the modern traveler."
+          ctaText="Book Your Room"
+          imageUrl="/hero/hotels23.jpg"
+          stats={[
+            { label: "Luxury Hotels", value: "300+" },
+            { label: "Destinations", value: "150+" },
+            { label: "Guest Services", value: "24/7" }
+          ]}
+        />
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto mt-24 px-6 pb-16">
+
         {/* TOP SEARCH & TITLE */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
           <div>
@@ -63,12 +81,12 @@ const HotelsPage = () => {
             </h1>
             <p className="text-gray-500 mt-2 font-medium">Explore {hotels.length}+ handpicked hotels and resorts</p>
           </div>
-          
+
           <div className="flex items-center gap-3 bg-white p-2 rounded-2xl border border-gray-100 shadow-sm w-full md:w-[450px]">
             <div className="pl-3 text-gray-400"><IconSearch size={22} /></div>
-            <input 
-              type="text" 
-              placeholder="Search by city or hotel name..." 
+            <input
+              type="text"
+              placeholder="Search by city or hotel name..."
               className="bg-transparent border-none focus:ring-0 w-full text-sm font-semibold text-gray-700"
             />
             <button className="bg-green-600 text-white px-6 py-3 rounded-xl text-sm font-bold hover:bg-green-700 transition shadow-lg shadow-green-100">
@@ -78,7 +96,7 @@ const HotelsPage = () => {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
-          
+
           {/* LEFT SIDEBAR: FILTERS */}
           <aside className="w-full lg:w-72 space-y-6">
             <div className="bg-white p-7 rounded-[32px] border border-gray-100 shadow-sm">
@@ -129,14 +147,14 @@ const HotelsPage = () => {
 
             {hotels.map((hotel) => (
               <div key={hotel._id} className="group bg-white rounded-[32px] overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl hover:border-green-100 transition-all duration-500 flex flex-col md:flex-row h-full md:h-72">
-                
+
                 {/* Image Section */}
                 <div className="relative w-full md:w-80 h-64 md:h-auto overflow-hidden">
-                  <Image 
-                    src={hotel.image} 
-                    alt={hotel.name} 
-                    fill 
-                    className="object-cover group-hover:scale-110 transition-transform duration-700" 
+                  <Image
+                    src={hotel.image}
+                    alt={hotel.name}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-700"
                     unoptimized
                   />
                   <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-1 shadow-sm">
@@ -155,7 +173,7 @@ const HotelsPage = () => {
                       </span>
                     </div>
                     <h2 className="text-2xl font-black text-gray-900 mb-3 group-hover:text-green-600 transition-colors">{hotel.name}</h2>
-                    
+
                     {/* Amenities Icons */}
                     <div className="flex items-center gap-4 mt-4">
                       {hotel.amenities.includes("Free Wifi") && <IconWifi size={18} className="text-gray-400" title="WiFi" />}

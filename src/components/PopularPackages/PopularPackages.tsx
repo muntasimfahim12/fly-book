@@ -67,7 +67,7 @@ const PopularPackages = () => {
                   {item.country}
                 </div>
                 <div className="absolute bottom-3 left-0 right-0 px-3 flex justify-between items-center text-white drop-shadow-lg">
-                  <div className="flex items-center gap-1 text-[11px] font-medium bg-black/20 px-2 py-0.5 rounded-md backdrop-blur-[2px]">
+                  <div className="flex items-center gap-1 text-[11px] font-medium bg-black/20 px-2 py-0.5 rounded-md   backdrop-blur-[2px]">
                     <IconCalendar size={14} />
                     {item.days}
                   </div>

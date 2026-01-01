@@ -1,56 +1,100 @@
-/* eslint-disable @next/next/no-img-element */
+/* eslint-disable jsx-a11y/alt-text */
 "use client";
 
-import React, { useState } from "react";
-import { 
-  PlaneTakeoff, 
-  Plus, 
-  Search, 
-  Filter, 
-  Edit2, 
-  Trash2, 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ArrowUpDown,
+/* eslint-disable @next/next/no-img-element */
+import React, { useEffect, useState } from "react";
+import {
+  PlaneTakeoff,
+  Plus,
+  Edit2,
+  Trash2,
+  ChevronRight,
   Calendar,
   Clock,
-  ExternalLink,
-  ChevronRight
 } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
-// ডামি ফ্লাইট ডেটা
-const initialFlights = [
-  { id: "FL-001", airline: "Emirates", from: "Dhaka (DAC)", to: "Dubai (DXB)", date: "2024-10-25", time: "10:30 AM", price: "$450", status: "Active" },
-  { id: "FL-002", airline: "Qatar Airways", from: "Dhaka (DAC)", to: "Doha (DOH)", date: "2024-10-26", time: "02:15 PM", price: "$520", status: "Active" },
-  { id: "FL-003", airline: "Biman Bangladesh", from: "Dhaka (DAC)", to: "London (LHR)", date: "2024-10-28", time: "08:00 AM", price: "$890", status: "Delayed" },
-  { id: "FL-004", airline: "Turkish Airlines", from: "Dhaka (DAC)", to: "Istanbul (IST)", date: "2024-10-30", time: "11:45 PM", price: "$710", status: "Active" },
-  { id: "FL-005", airline: "Air India", from: "Dhaka (DAC)", to: "Delhi (DEL)", date: "2024-11-01", time: "05:30 PM", price: "$180", status: "Cancelled" },
-];
+interface FlightType {
+  _id: string;
+  airline: string;
+  from: string;
+  to: string;
+  date: string;
+  time: string;
+  price: number;
+  status: "Active" | "Delayed" | "Cancelled";
+  logo?: string;
+}
 
 const FlightsPage = () => {
-  const [flights] = useState(initialFlights);
+  const [flights, setFlights] = useState<FlightType[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // ================= FETCH =================
+  const fetchFlights = async () => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/flights`);
+      const data = await res.json();
+      setFlights(data);
+    } catch (err) {
+      console.error("Fetch flights error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchFlights();
+  }, []);
+
+  // ================= DELETE =================
+  const handleDelete = async (id: string) => {
+    const confirmDelete = confirm(
+      "Are you sure you want to delete this flight?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/flights/${id}`,
+        { method: "DELETE" }
+      );
+
+      if (!res.ok) throw new Error("Delete failed");
+
+      // instant UI update
+      setFlights((prev) => prev.filter((f) => f._id !== id));
+    } catch (error) {
+      console.error("Delete error:", error);
+      alert("Failed to delete flight");
+    }
+  };
+
+  if (loading)
+    return <p className="text-center mt-20 font-bold">Loading flights...</p>;
 
   return (
     <div className="space-y-6">
-      {/* Header Section */}
+      {/* ================= HEADER ================= */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-black text-slate-900 flex items-center gap-3">
             <span className="p-2 bg-blue-600 rounded-xl">
               <PlaneTakeoff className="w-6 h-6 text-white" />
             </span>
             Flights
           </h1>
-          <p className="text-slate-500 text-sm font-medium mt-1">Manage schedules, pricing and airline operations.</p>
+          <p className="text-slate-500 text-sm font-medium mt-1">
+            Manage schedules, pricing and airline operations.
+          </p>
         </div>
-        
-        {/* Click করলে Add Flight পেজে যাবে */}
+
         <Link href="/dashboard/flights/add">
-          <motion.button 
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold shadow-xl shadow-blue-200 hover:bg-blue-700 transition-all"
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold shadow-xl hover:bg-blue-700 transition-all"
           >
             <Plus className="w-5 h-5" />
             Add New Flight
@@ -58,100 +102,106 @@ const FlightsPage = () => {
         </Link>
       </div>
 
-      {/* Modern Filter Bar */}
-      <div className="bg-white p-3 rounded-2xl border border-slate-100 shadow-sm flex flex-col lg:flex-row gap-3 items-center">
-        <div className="relative flex-1 w-full">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <input 
-            type="text" 
-            placeholder="Search by ID, airline or destination..." 
-            className="w-full pl-11 pr-4 py-3 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-100 outline-none transition-all font-medium"
-          />
-        </div>
-        <div className="flex items-center gap-2 w-full lg:w-auto">
-          <button className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50">
-            <Filter className="w-4 h-4" /> Filters
-          </button>
-          <button className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-4 py-3 bg-slate-50 rounded-xl text-sm font-bold text-blue-600 hover:bg-blue-100 transition-colors">
-            Export <ExternalLink className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      </div>
-
-      {/* Table Section */}
-      <div className="bg-white rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40 overflow-hidden">
+      {/* ================= TABLE ================= */}
+      <div className="bg-white rounded-[2rem] border border-slate-100 shadow-xl overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full">
             <thead>
-              <tr className="bg-slate-50/50 border-b border-slate-100">
-                <th className="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest">Airline & ID</th>
-                <th className="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest">Route</th>
-                <th className="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest">Schedule</th>
-                <th className="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest">Price</th>
-                <th className="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest">Status</th>
-                <th className="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest text-right">Action</th>
+              <tr className="bg-slate-50 border-b">
+                <th className="px-8 py-5 text-xs font-black text-slate-400">
+                  Airline
+                </th>
+                <th className="px-8 py-5 text-xs font-black text-slate-400">
+                  Route
+                </th>
+                <th className="px-8 py-5 text-xs font-black text-slate-400">
+                  Schedule
+                </th>
+                <th className="px-8 py-5 text-xs font-black text-slate-400">
+                  Price
+                </th>
+                <th className="px-8 py-5 text-xs font-black text-slate-400">
+                  Status
+                </th>
+                <th className="px-8 py-5 text-xs font-black text-slate-400 text-right">
+                  Action
+                </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+
+            <tbody>
               {flights.map((flight, index) => (
-                <motion.tr 
-                  key={flight.id}
+                <motion.tr
+                  key={flight._id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className="group hover:bg-blue-50/30 transition-all cursor-default"
+                  className="hover:bg-blue-50/40"
                 >
+                  {/* Airline */}
                   <td className="px-8 py-5">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-white border border-slate-100 rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
-                        <img 
-                          src={`https://ui-avatars.com/api/?name=${flight.airline}&background=random&color=fff`} 
-                          alt="logo" 
-                          className="w-8 h-8 rounded-lg"
-                        />
-                      </div>
+                      <img
+                        src={
+                          flight.logo ||
+                          `https://ui-avatars.com/api/?name=${flight.airline}`
+                        }
+                        className="w-10 h-10 rounded-xl"
+                      />
                       <div>
-                        <p className="text-sm font-black text-slate-800 uppercase tracking-tight">{flight.airline}</p>
-                        <p className="text-[10px] text-blue-600 font-bold font-mono bg-blue-50 px-1.5 py-0.5 rounded mt-1 inline-block">{flight.id}</p>
+                        <p className="font-black text-slate-800">
+                          {flight.airline}
+                        </p>
+                        <p className="text-xs text-blue-600 font-mono">
+                          {flight._id}
+                        </p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-8 py-5">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-slate-700">{flight.from.split(' ')[0]}</span>
-                      <ChevronRight className="w-3 h-3 text-slate-300" />
-                      <span className="text-sm font-bold text-slate-700">{flight.to.split(' ')[0]}</span>
-                    </div>
-                    <p className="text-[11px] text-slate-400 font-medium mt-1">Direct Flight</p>
+
+                  {/* Route */}
+                  <td className="px-8 py-5 font-bold">
+                    {flight.from} <ChevronRight className="inline w-3" />{" "}
+                    {flight.to}
                   </td>
-                  <td className="px-8 py-5">
-                    <div className="space-y-1.5">
-                      <p className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                        <Calendar className="w-3.5 h-3.5 text-blue-500" /> {flight.date}
-                      </p>
-                      <p className="text-[11px] text-slate-400 flex items-center gap-1.5 font-bold">
-                        <Clock className="w-3.5 h-3.5" /> {flight.time}
-                      </p>
-                    </div>
+
+                  {/* Schedule */}
+                  <td className="px-8 py-5 text-sm">
+                    <p className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4 text-blue-500" />
+                      {flight.date}
+                    </p>
+                    <p className="flex items-center gap-1 text-xs text-slate-400">
+                      <Clock className="w-4 h-4" />
+                      {flight.time}
+                    </p>
                   </td>
+
+                  {/* Price */}
+                  <td className="px-8 py-5 font-black">${flight.price}</td>
+
+                  {/* Status */}
                   <td className="px-8 py-5">
-                    <span className="text-lg font-black text-slate-900">{flight.price}</span>
-                  </td>
-                  <td className="px-8 py-5">
-                    <span className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-tighter shadow-sm border ${
-                      flight.status === 'Active' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
-                      flight.status === 'Delayed' ? 'bg-amber-50 text-amber-600 border-amber-100' : 
-                      'bg-rose-50 text-rose-600 border-rose-100'
-                    }`}>
+                    <span className="px-3 py-1 rounded-xl text-xs font-black bg-emerald-50 text-emerald-600">
                       {flight.status}
                     </span>
                   </td>
+
+                  {/* Actions */}
                   <td className="px-8 py-5 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <button title="Edit" className="p-2.5 bg-slate-50 text-slate-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm">
-                        <Edit2 className="w-4 h-4" />
-                      </button>
-                      <button title="Delete" className="p-2.5 bg-slate-50 text-slate-400 rounded-xl hover:bg-red-50 hover:text-red-600 transition-all shadow-sm border border-transparent hover:border-red-100">
+                    <div className="flex justify-end gap-2">
+                      {/* EDIT */}
+                      <Link href={`/dashboard/flights/edit/${flight._id}`}>
+                        <button className="p-2 rounded-xl bg-slate-50 hover:bg-blue-600 hover:text-white transition">
+                          <Edit2 className="w-4 h-4" />
+                        </button>
+                      </Link>
+
+                      {/* DELETE */}
+                      <button
+                        onClick={() => handleDelete(flight._id)}
+                        className="p-2 rounded-xl bg-slate-50 hover:bg-red-50 hover:text-red-600 transition"
+                      >
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -160,15 +210,6 @@ const FlightsPage = () => {
               ))}
             </tbody>
           </table>
-        </div>
-        
-        {/* Modern Pagination */}
-        <div className="px-8 py-6 bg-slate-50/30 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Showing 5 of 124 Results</p>
-          <div className="flex gap-2">
-            <button className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-400 cursor-not-allowed">PREV</button>
-            <button className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-700 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all shadow-sm">NEXT</button>
-          </div>
         </div>
       </div>
     </div>
