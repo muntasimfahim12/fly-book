@@ -2,14 +2,15 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 import React, { useEffect, useState } from "react";
-import { 
-  IconPlaneDeparture, IconSearch, IconClock, 
+import {
+  IconPlaneDeparture, IconSearch, IconClock,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   IconArrowRight, IconFilter, IconX, IconChevronLeft,
   IconMapPin, IconCalendar, IconCircleCheckFilled, IconBolt
 } from "@tabler/icons-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { HeroSection } from "@/src/components/shared/hero/HeroSection";
+import { useRouter } from "next/navigation";
 
 export default function FlightsPage() {
   const [flights, setFlights] = useState<any[]>([]);
@@ -37,11 +38,14 @@ export default function FlightsPage() {
     fetchFlights();
   }, []);
 
+  const router = useRouter();
+
+
   useEffect(() => {
     let data = [...flights];
     if (search) {
-      data = data.filter(f => 
-        f.from.toLowerCase().includes(search.toLowerCase()) || 
+      data = data.filter(f =>
+        f.from.toLowerCase().includes(search.toLowerCase()) ||
         f.to.toLowerCase().includes(search.toLowerCase()) ||
         f.airline.toLowerCase().includes(search.toLowerCase())
       );
@@ -68,9 +72,9 @@ export default function FlightsPage() {
       />
 
       <div className="max-w-7xl mx-auto px-4 md:px-6 -mt-16 relative z-30">
-        
+
         {/* --- ULTRA MODERN SEARCH BAR --- */}
-        <motion.div 
+        <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           className="bg-white/80 backdrop-blur-xl p-3 rounded-[32px] shadow-[0_30px_100px_rgba(0,0,0,0.08)] border border-emerald-50 mb-12"
@@ -102,7 +106,7 @@ export default function FlightsPage() {
         </motion.div>
 
         <div className="flex flex-col lg:flex-row gap-8">
-          
+
           {/* --- SIDEBAR FILTERS --- */}
           <aside className={`fixed inset-0 z-[100] bg-white p-8 lg:relative lg:inset-auto lg:z-auto lg:bg-transparent lg:p-0 lg:w-72 transition-all duration-500 lg:translate-x-0 ${isFilterOpen ? 'translate-x-0 opacity-100' : '-translate-x-full lg:opacity-100'}`}>
             <div className="lg:hidden flex justify-between items-center mb-8">
@@ -112,31 +116,31 @@ export default function FlightsPage() {
             </div>
 
             <div className="bg-white p-7 rounded-[32px] border border-emerald-50 shadow-[0_10px_40px_rgba(0,0,0,0.02)] sticky top-28">
-               <div className="flex items-center gap-2 mb-6 border-b border-emerald-50 pb-4">
-                 <IconFilter size={18} className="text-emerald-600" />
-                 <h3 className="font-black text-black text-xs uppercase tracking-widest">Refine Search</h3>
-               </div>
-               
-               <div className="space-y-8">
-                 <FilterGroup title="Stops">
-                   {["Non-stop", "1 Stop", "2+ Stops"].map(s => (
-                     <FilterItem key={s} label={s} type="checkbox" checked={stops.includes(s)} onChange={() => setStops(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s])} />
-                   ))}
-                 </FilterGroup>
+              <div className="flex items-center gap-2 mb-6 border-b border-emerald-50 pb-4">
+                <IconFilter size={18} className="text-emerald-600" />
+                <h3 className="font-black text-black text-xs uppercase tracking-widest">Refine Search</h3>
+              </div>
 
-                 <FilterGroup title="Travel Class">
-                   {["Economy", "Business", "First Class"].map(c => (
-                     <FilterItem key={c} label={c} type="radio" name="cabin" checked={cabin === c} onChange={() => setCabin(c)} />
-                   ))}
-                 </FilterGroup>
-               </div>
-               
-               <button 
+              <div className="space-y-8">
+                <FilterGroup title="Stops">
+                  {["Non-stop", "1 Stop", "2+ Stops"].map(s => (
+                    <FilterItem key={s} label={s} type="checkbox" checked={stops.includes(s)} onChange={() => setStops(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s])} />
+                  ))}
+                </FilterGroup>
+
+                <FilterGroup title="Travel Class">
+                  {["Economy", "Business", "First Class"].map(c => (
+                    <FilterItem key={c} label={c} type="radio" name="cabin" checked={cabin === c} onChange={() => setCabin(c)} />
+                  ))}
+                </FilterGroup>
+              </div>
+
+              <button
                 onClick={() => { setStops([]); setCabin(""); setIsFilterOpen(false); }}
                 className="w-full mt-10 py-3 text-[10px] font-black text-slate-400 hover:text-white hover:bg-black rounded-xl transition-all uppercase tracking-[2px] border border-slate-100"
-               >
-                 Reset Filters
-               </button>
+              >
+                Reset Filters
+              </button>
             </div>
           </aside>
 
@@ -222,9 +226,13 @@ export default function FlightsPage() {
                           {f.price.toLocaleString()}
                         </p>
                       </div>
-                      <button className="bg-emerald-600 hover:bg-black text-white px-7 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-[2px] transition-all flex items-center gap-3 shadow-[0_10px_30px_rgba(16,185,129,0.2)] hover:shadow-black/10 active:scale-95">
+                      <button
+                        onClick={() => router.push(`/flights/booking/${f._id}`)}
+                        className="bg-emerald-600 hover:bg-black text-white px-7 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-[2px] transition-all flex items-center gap-3 shadow-[0_10px_30px_rgba(16,185,129,0.2)] hover:shadow-black/10 active:scale-95"
+                      >
                         SELECT <IconArrowRight size={14} />
                       </button>
+
                     </div>
 
                   </div>
@@ -249,10 +257,10 @@ const FilterGroup = ({ title, children }: any) => (
 const FilterItem = ({ label, type, ...props }: any) => (
   <label className="flex items-center gap-3 cursor-pointer group">
     <div className="relative flex items-center justify-center">
-      <input 
-        type={type} 
-        className={`w-4 h-4 border-2 border-slate-200 ${type === 'radio' ? 'rounded-full' : 'rounded'} text-emerald-600 focus:ring-emerald-500 transition-all checked:border-emerald-600`} 
-        {...props} 
+      <input
+        type={type}
+        className={`w-4 h-4 border-2 border-slate-200 ${type === 'radio' ? 'rounded-full' : 'rounded'} text-emerald-600 focus:ring-emerald-500 transition-all checked:border-emerald-600`}
+        {...props}
       />
     </div>
     <span className="text-xs font-bold text-slate-600 group-hover:text-emerald-700 transition-colors uppercase tracking-tight">{label}</span>
@@ -263,8 +271,8 @@ function LoadingState() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white">
       <div className="relative">
-        <motion.div 
-          animate={{ rotate: 360 }} 
+        <motion.div
+          animate={{ rotate: 360 }}
           transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
           className="w-16 h-16 border-t-2 border-b-2 border-emerald-600 rounded-full"
         />
